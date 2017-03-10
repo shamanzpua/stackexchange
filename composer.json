@@ -1,0 +1,20 @@
+{
+    "name": "shamanzpua/apirequest",
+    "description": "base for api requests",
+    "keywords": ["request", "api", "stackoverflow", "stackexchange"],
+    "license": "BSD-3-Clause",
+    "require": {
+        "shamanzpua/apirequest": "2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "shamanzpua\\stackexchange\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "shamanzp",
+            "email": "yura224k@gmail.com"
+        }
+    ]
+}
