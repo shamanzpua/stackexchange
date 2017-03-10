@@ -7,7 +7,7 @@ Request to stackexchange api
 Add to composer.json
 ````
  "require": {
-    "shamanzpua/stackexchange": "*"
+    "shamanzpua/stackexchange": "1.0.1"
  }
 ````
 ## Usage

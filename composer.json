@@ -1,6 +1,6 @@
 {
-    "name": "shamanzpua/apirequest",
-    "description": "base for api requests",
+    "name": "shamanzpua/stackexchange",
+    "description": "stackexchange api requests",
     "keywords": ["request", "api", "stackoverflow", "stackexchange"],
     "license": "BSD-3-Clause",
     "require": {
