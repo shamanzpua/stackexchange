@@ -4,7 +4,7 @@
     "keywords": ["request", "api", "stackoverflow", "stackexchange"],
     "license": "BSD-3-Clause",
     "require": {
-        "shamanzpua/apirequest": "2.1"
+        "shamanzpua/apirequest": "*"
     },
     "autoload": {
         "psr-4": {

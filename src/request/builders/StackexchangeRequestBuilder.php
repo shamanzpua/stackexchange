@@ -17,6 +17,8 @@ abstract class StackexchangeRequestBuilder extends AbstractRequestBuilder
         return [
             'key' => [],
             'site' => [],
+            'page' => [],
+            'pagesize' => [],
         ];
     }
 

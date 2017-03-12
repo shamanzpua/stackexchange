@@ -54,12 +54,7 @@ class Process implements Processable
      */
     public function getSearchExcerptsIds($data)
     {
-        foreach ($data['items'] as $key => $item) {
-            if ($item['item_type'] !== "question") {
-                unset($data['items'][$key]);
-            }
-        }
-        return $this->getTargetData($data, self::TARGET_QUESTION_ID);
+        return $this->getTargetData($data, [self::TARGET_QUESTION_ID, self::TARGET_BODY]);
     }
     
     /**

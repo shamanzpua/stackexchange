@@ -4,24 +4,29 @@ namespace shamanzpua\stackexchange;
 use shamanzpua\stackexchange\request\StackexchangeApi;
 use shamanzpua\stackexchange\data\process\stackoverflow\Process;
 use shamanzpua\stackexchange\data\helpers\Json;
+use shamanzpua\stackexchange\data\Registry;
 
 /**
  * Stackechchange api class
  */
 class Stackoverflow implements StackexchangeInterface
 {
+
     const SITE_STACKOVERFLOW = 'stackoverflow';
+    const PAGESIZE = 30;
+    const MIN_ANSWERS = 1;
+    const FIELD_ANSWERS = 'answers';
+
     /**
      * @var StackexchangeApi
      */
     private $api;
-    
+
     /**
      * @var Process
      */
     private $processor;
-    
-        
+
     public function __construct($apiKey)
     {
         if (!$apiKey) {
@@ -30,34 +35,56 @@ class Stackoverflow implements StackexchangeInterface
         $this->api = new StackexchangeApi($apiKey, self::SITE_STACKOVERFLOW);
         $this->processor = new Process();
     }
-    
-    public function grab($search)
+
+    public function grab($search, $limit = Registry::DEFAULT_PAGE)
     {
         $ordering = [
             'sort' => 'votes',
             'order' => 'desc',
+            'pagesize' => self::PAGESIZE,
         ];
-        
+
+
         $response = $this
             ->api
-            ->apiSearchExcerpts(array_merge($ordering, ['q' => $search]));
-        $ids=$this
+            ->apiSearchExcerpts(array_merge($ordering, [
+            'q' => $search,
+            'answers' => self::MIN_ANSWERS,
+            'page' => Registry::get(Registry::KEY_PAGE),
+        ]));
+        $questions = $this
             ->processor
             ->getSearchExcerptsIds(Json::decode($response, true));
-        if (!$ids) {
-            return false;
-        }
-        $response = $this->api->apiQuestionAnswers(
-            implode(";", $ids),
-            $ordering
-        );
+        Registry::set(Registry::KEY_QUESTIONS, $questions);
         
-        $answers = $this
-            ->processor
-            ->getAnswersBody(Json::decode($response, true));
-        return $answers;
+        if (!empty($questions) && (Registry::get(Registry::KEY_PAGE) < $limit)) {
+            $nextPage = Registry::get(Registry::KEY_PAGE) + 1;
+            Registry::set(Registry::KEY_PAGE, $nextPage);        
+            return $this->grab($search);
+        }
+        
+        $this->parseAnswers($ordering);
+
+        return Registry::get(Registry::KEY_QUESTIONS_WITH_ANSWERS);
     }
 
+    public function parseAnswers($ordering)
+    {
+        $questions = Registry::get(Registry::KEY_QUESTIONS);
+        if (!$questions) {
+            return;
+        }
+        foreach ($questions as $key => $item) {
+            $responseAnswers = $this->api->apiQuestionAnswers(
+                $item[Process::TARGET_QUESTION_ID], $ordering
+            );
+
+            $questions[$key][self::FIELD_ANSWERS] = $this
+                ->processor
+                ->getAnswersBody(Json::decode($responseAnswers, true));
+        } 
+        Registry::set(Registry::KEY_QUESTIONS_WITH_ANSWERS, $questions);
+    }
 
     /**
      * @return type

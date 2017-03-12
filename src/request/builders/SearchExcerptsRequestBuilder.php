@@ -27,6 +27,7 @@ class SearchExcerptsRequestBuilder extends StackexchangeRequestBuilder implement
                 'closed' => ['true', 'false'],
                 'notice' => ['true', 'false'],
                 'wiki' => ['true', 'false'],
+                'answers' => [],
                 'body' => [],
                 'nottagged' => [],
                 'tagged' => [],
